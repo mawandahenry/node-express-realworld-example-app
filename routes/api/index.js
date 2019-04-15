@@ -1,5 +1,5 @@
 var router = require('express').Router();
-
+console.log('index-api called');
 router.use('/', require('./users'));
 router.use('/profiles', require('./profiles'));
 router.use('/articles', require('./articles'));

@@ -10,7 +10,6 @@ var http = require('http'),
     mongoose = require('mongoose');
 
 var isProduction = process.env.NODE_ENV === 'production';
-
 // Create global app object
 var app = express();
 
@@ -20,6 +19,7 @@ app.use(cors());
 app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser());
 
 app.use(require('method-override')());
 app.use(express.static(__dirname + '/public'));
@@ -31,9 +31,11 @@ if (!isProduction) {
 }
 
 if(isProduction){
-  mongoose.connect(process.env.MONGODB_URI);
+  mongoose.connect('mongodb://naco:sesnaco123@mawanda-shard-00-00-bqek1.mongodb.net:27017/conduit?ssl=true&replicaSet=Mawanda-shard-0&authSource=admin&retryWrites=true', {useMongoClient: true});
+  //console.log("am connected to the source");
 } else {
-  mongoose.connect('mongodb://localhost/conduit');
+  //console.log('using localhost baby');
+  mongoose.connect('mongodb://localhost:27017/conduit');
   mongoose.set('debug', true);
 }
 
@@ -43,8 +45,18 @@ require('./models/Comment');
 require('./config/passport');
 
 app.use(require('./routes'));
+// app.use('/started', (req, res, next) => {
+//   const name = req.body.name;
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   console.log(req.body);
+//   res.status(200).json({
+//     "status": "well received"
+//   });
+//
+// })
 
-/// catch 404 and forward to error handler
+//catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
@@ -72,6 +84,7 @@ if (!isProduction) {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+  //console.log("source of error in production mode");
   res.json({'errors': {
     message: err.message,
     error: {}
