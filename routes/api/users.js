@@ -3,9 +3,8 @@ var router = require('express').Router();
 var passport = require('passport');
 var User = mongoose.model('User');
 var auth = require('../auth');
-console.log('user-page route called');
+
 router.get('/user', function(req, res, next){
-  console.log("user route called");
   User.findById(req.payload.id).then(function(user){
     if(!user){
       return res.sendStatus(401);

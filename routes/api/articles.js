@@ -4,6 +4,7 @@ var Article  = mongoose.model('Article');
 var Comment  = mongoose.model('Comment');
 var User     = mongoose.model('User');
 var auth     = require('../auth');
+var Cat      = mongoose.model('Category');
 
 // Preload article objects on routes with ':article'
 router.param('article', function(req, res, next, slug) {
@@ -125,13 +126,14 @@ router.get('/feed', auth.required, function(req, res, next) {
 router.post('/', auth.required, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
+    Cat.find({name: req.body.article.category}, (err, info) => {
 
+    })
     var article = new Article(req.body.article);
 
     article.author = user;
 
     return article.save().then(function(){
-      console.log(article.author);
       return res.json({article: article.toJSONFor(user)});
     });
   }).catch(next);
@@ -151,6 +153,7 @@ router.get('/:article', auth.optional, function(req, res, next) {
 
 // update article
 router.put('/:article', auth.required, function(req, res, next) {
+  console.log(req.payload.id);
   User.findById(req.payload.id).then(function(user){
     if(req.article.author._id.toString() === req.payload.id.toString()){
       if(typeof req.body.article.title !== 'undefined'){

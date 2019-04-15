@@ -1,9 +1,9 @@
 var router = require('express').Router();
-console.log('index-api called');
 router.use('/', require('./users'));
 router.use('/profiles', require('./profiles'));
 router.use('/articles', require('./articles'));
 router.use('/tags', require('./tags'));
+router.use('/category', require('./category'));// including the routing area concerned for categories
 
 router.use(function(err, req, res, next){
   if(err.name === 'ValidationError'){

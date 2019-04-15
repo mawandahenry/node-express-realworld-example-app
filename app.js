@@ -29,32 +29,23 @@ app.use(session({ secret: 'conduit', cookie: { maxAge: 60000 }, resave: false, s
 if (!isProduction) {
   app.use(errorhandler());
 }
-
+// connection string to the Mongodb cluster
 if(isProduction){
   mongoose.connect('mongodb://naco:sesnaco123@mawanda-shard-00-00-bqek1.mongodb.net:27017/conduit?ssl=true&replicaSet=Mawanda-shard-0&authSource=admin&retryWrites=true', {useMongoClient: true});
-  //console.log("am connected to the source");
+
 } else {
-  //console.log('using localhost baby');
+//use this local connection in case you fail to connect to the internet
   mongoose.connect('mongodb://localhost:27017/conduit');
   mongoose.set('debug', true);
 }
-
+require('./models/Category'); //include the Category Model to work with categories
 require('./models/User');
 require('./models/Article');
 require('./models/Comment');
 require('./config/passport');
 
 app.use(require('./routes'));
-// app.use('/started', (req, res, next) => {
-//   const name = req.body.name;
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   console.log(req.body);
-//   res.status(200).json({
-//     "status": "well received"
-//   });
-//
-// })
+
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {

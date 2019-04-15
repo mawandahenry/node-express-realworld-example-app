@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 var slug = require('slug');
 var User = mongoose.model('User');
+var Cat = mongoose.model('Category');
 
 var ArticleSchema = new mongoose.Schema({
   slug: {type: String, lowercase: true, unique: true},
@@ -11,6 +12,7 @@ var ArticleSchema = new mongoose.Schema({
   favoritesCount: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   tagList: [{ type: String }],
+  category: [{type: String} ],
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {timestamps: true});
 
@@ -23,6 +25,7 @@ ArticleSchema.pre('validate', function(next){
 
   next();
 });
+
 
 ArticleSchema.methods.slugify = function() {
   this.slug = slug(this.title) + '-' + (Math.random() * Math.pow(36, 6) | 0).toString(36);
@@ -44,6 +47,7 @@ ArticleSchema.methods.toJSONFor = function(user){
     title: this.title,
     description: this.description,
     body: this.body,
+    category: this.category,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
     tagList: this.tagList,
